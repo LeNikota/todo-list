@@ -1,11 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
 
+%center-vertically {
+  display: flex;
+  align-items: center;
+}
+
 :root{
   --bg-header:#333;
   --bg-sidebar:#ddd;
   --bg-main:#eee;
   --bg-button-hover: #ccc;
   --font-color:#333;
+}
+
+*:focus{
+  outline: none;
 }
 
 html, body{
@@ -31,6 +40,8 @@ button{
   text-align: left;
   border: none;
   color: var(--font-color);
+  padding: 10px;
+  border-radius: 5px;
 
   &:hover{
     background-color: var(--bg-button-hover);
@@ -46,14 +57,16 @@ header{
   align-items: center;
 }
 
+img{
+  height: 0.9rem;
+}
+
 .sidebar{
   grid-area: sidebar;
   background-color: var(--bg-sidebar);
   padding: 30px;
 
   button{
-    padding: 10px 10px;
-    border-radius: 5px;
     font-size: 0.9rem;
   }
 
@@ -63,8 +76,7 @@ header{
   }
 
   .project, .add-project{
-    display: flex;
-    align-items: center;
+    @extend %center-vertically;
   }
 
   .project{
@@ -85,15 +97,54 @@ header{
     margin-top: 10px;
     gap: 10px;
   }
-
-  img{
-    height: 0.9rem;
-  }
 }
 
 main{
   grid-area: main;
   background-color: var(--bg-main);
+
+  .project-display{
+    width: 900px;
+    margin: 0 auto;
+    padding: 0 40px;
+
+    h2{
+      font-size: 2em;
+    }
+
+    .task{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 10px;
+
+      input{
+        margin-left: auto;
+        background-color: var(--bg-sidebar);
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+
+      }
+
+      p {
+        font-size: 1rem;
+      }
+  
+      img {
+        height: 1.5rem;
+      }
+    }
+
+    .add-task{
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 32px;
+      @extend %center-vertically;
+      gap: 10px;
+    }
+  }
 }
 
 h1{

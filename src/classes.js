@@ -49,16 +49,15 @@ export default class Element {
 }
 
 export class ToDo {
-  constructor(title, date, dueDate, priority){
+  constructor(title, dueDate, priority){
     this.title = title;
-    this.date = date;
     this.dueDate = dueDate;
     this.priority = priority;
     this.complete = false;
   }
 }
 
-export class project {
+export class Project {
   constructor(title){
     this.title = title;
     this.toDos = [];
