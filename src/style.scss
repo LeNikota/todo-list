@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
+
+:root{
+  --bg-header:#333;
+  --bg-sidebar:#ddd;
+  --bg-main:#eee;
+  --bg-button-hover: #ccc;
+  --font-color:#333;
+}
+
+html, body{
+  min-height: 100vh;
+}
+
+body{
+  margin: 0;
+  display: grid;
+  grid-template: 100px 1fr/ 250px 1fr;
+  grid-template-areas: 
+  "header header"
+  "sidebar main";
+  font-family: 'Lato', sans-serif;
+  color: var(--font-color);
+}
+
+button{
+  cursor: pointer;
+  appearance: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  border: none;
+  color: var(--font-color);
+
+  &:hover{
+    background-color: var(--bg-button-hover);
+  }
+}
+
+header{
+  grid-area: header;
+  padding: 20px;
+  background-color: var(--bg-header);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sidebar{
+  grid-area: sidebar;
+  background-color: var(--bg-sidebar);
+  padding: 30px;
+
+  button{
+    padding: 10px 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+  }
+
+  h2{
+    margin: 20px 0 10px 0;
+    font-size: 1.25rem;
+  }
+
+  .project, .add-project{
+    display: flex;
+    align-items: center;
+  }
+
+  .project{
+    justify-content: space-between;
+    
+    img{
+      visibility: hidden;
+    }
+
+    &:hover{
+      img{
+        visibility: visible;
+      }
+    }
+  }
+
+  .add-project{
+    margin-top: 10px;
+    gap: 10px;
+  }
+
+  img{
+    height: 0.9rem;
+  }
+}
+
+main{
+  grid-area: main;
+  background-color: var(--bg-main);
+}
+
+h1{
+  margin: 0;
+  color: white;
+  font-weight: 900;
+  font-size: 2.25rem;
+  user-select: none;
+}
