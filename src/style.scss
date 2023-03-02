@@ -48,6 +48,11 @@ button{
   }
 }
 
+button.active{
+  font-weight: bold;
+  background-color: var(--bg-button-hover);
+}
+
 header{
   grid-area: header;
   padding: 20px;
@@ -68,6 +73,7 @@ img{
 
   button{
     font-size: 0.9rem;
+    margin-bottom: 10px;
   }
 
   h2{

@@ -3,7 +3,7 @@ export default class Element {
     this.elementType = elementType;
     this.attributes = {};
     this.children = [];
-    this.eventListener = [];
+    this.eventListener = {};
   }
 
   addAttribute(attributes){
@@ -28,11 +28,23 @@ export default class Element {
     return this;
   }
 
+  addEventListener(eventListener){
+    for (const event in eventListener){
+      this.eventListener[event] = eventListener[event];
+    }
+    
+    return this;
+  }
+
   build(){
     let DOMelement = document.createElement(this.elementType);
 
     for (const key in this.attributes) {
       DOMelement.setAttribute(key, this.attributes[key])
+    }
+
+    for (const event in this.eventListener){
+      DOMelement.addEventListener(event, this.eventListener[event]);
     }
 
     if (this.textContent){

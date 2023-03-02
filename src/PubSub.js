@@ -1,4 +1,4 @@
-export const pubsub = {
+export const PubSub = {
   events: {},
 
   subscribe(eventName, func) {
@@ -10,7 +10,7 @@ export const pubsub = {
       this.events[eventName].filter((currentFunc) => currentFunc !== func);
     }
   },
-  pubsub(eventName, data) {
+  publish(eventName, data) {
     if (this.events[eventName]) {
       this.events[eventName].forEach((func) => {
         func(data);

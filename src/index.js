@@ -1,6 +1,4 @@
-import createDOM from "./createDOM";
+import createDOM from "./domFunctionality";
 import "./style.scss";
 
 createDOM();
-
-console.log(335345);

@@ -1,4 +1,5 @@
 import Element from "./classes";
+import { PubSub } from "./PubSub";
 import closeIcon from './icons/close_icon.svg';
 import addIcon from './icons/add_icon.svg';
 import incompleteIcon from './icons/task_incomplete.svg';
@@ -29,10 +30,11 @@ function createMain() {
 function createSidebar() {
   return new Element('div').addAttribute({ class: 'sidebar' })
     .appendChild(new Element('div').addAttribute({ class: 'project-list-calendar' })
-        .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('Today'))
-        .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('Week'))
-        .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('Month'))
-        .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('Year'))
+        .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('Today').addEventListener({'click': ()=> PubSub.publish('Calender button click', 'today')}))
+        .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('Week').addEventListener({'click': ()=> PubSub.publish('Calender button click', 'week')}))
+        .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('Month').addEventListener({'click': ()=> PubSub.publish('Calender button click', 'month')}))
+        .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('Year').addEventListener({'click': ()=> PubSub.publish('Calender button click', 'year')}))
+        .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('All time').addEventListener({'click': ()=> PubSub.publish('Calender button click', 'all time')}))
     )
     .appendChild(new Element('h2').setTextContent('Projects'))
     .appendChild(new Element('div').addAttribute({ class: 'project-list' })
