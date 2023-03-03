@@ -69,21 +69,22 @@ function createTaskModalWindow() {
   return new Element('div').addAttribute({ class: 'overlay', id: 'task-modal-window' })
   .addEventListener({click: toggleTaskModalWindow})
   .appendChild(new Element('form').addAttribute({ class: 'modal-window'})
+    .addEventListener({submit: onTaskAddition})
     .appendChild(new Element('h2').setTextContent('Add task'))
     .appendChild(new Element('label').addAttribute({ class: 'form-group'})
       .appendChild(new Element('span').setTextContent('Name: '))
-      .appendChild(new Element('input').addAttribute({required: ''}))
+      .appendChild(new Element('input').addAttribute({name: 'task_name', required: ''}))
     )
     .appendChild(new Element('label').addAttribute({ class: 'form-group'})
       .appendChild(new Element('span').setTextContent('Due date: '))
-      .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date'}))
+      .appendChild(new Element('input').addAttribute({type: 'date', name: 'task_due', required: ''}))
     )
     .appendChild(new Element('label').addAttribute({ class: 'form-group'})
       .appendChild(new Element('span').setTextContent('Priority: '))
       .appendChild(new Element('fieldset')
-        .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', required: ''}))
-        .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', required: ''}))
-        .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', required: ''}))
+        .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', value: 'low', required: ''}))
+        .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', value: 'medium', required: ''}))
+        .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', value: 'high', required: ''}))
       )
     )
     .appendChild(new Element('button').setTextContent('Add'))
@@ -102,4 +103,10 @@ function toggleTaskModalWindow(e) {
   if(!e.target.closest('.modal-window')){
     overlay.classList.toggle('opened')
   }
+}
+
+function onTaskAddition(e) {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target).entries());
+  PubSub.publish('Add task', data);
 }
