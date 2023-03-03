@@ -60,7 +60,7 @@ export default class Element {
   }
 }
 
-export class ToDo {
+export class Task {
   constructor(title, dueDate, priority){
     this.title = title;
     this.dueDate = dueDate;
@@ -72,7 +72,7 @@ export class ToDo {
 export class Project {
   constructor(title){
     this.title = title;
-    this.toDos = [];
+    this.tasks = [];
   }
 
   appendToDo(toDo) {

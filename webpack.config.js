@@ -3,6 +3,9 @@ const path = require('path');
 module.exports = {
   mode:'development', //change
   devtool: 'inline-source-map', //delete
+  devServer: {
+    static: './dist',
+  },
   entry: './src/index.js',
   output: {
     filename: 'main.js',

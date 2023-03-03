@@ -5,12 +5,28 @@
   align-items: center;
 }
 
+%position-center{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+%center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 :root{
   --bg-header:#333;
   --bg-sidebar:#ddd;
   --bg-main:#eee;
+  --bg-overlay: #00000080;
+  --bg-modal-window:white;
   --bg-button-hover: #ccc;
   --font-color:#333;
+  --font-light-color: white;
 }
 
 *:focus{
@@ -29,6 +45,9 @@ body{
   "header header"
   "sidebar main";
   font-family: 'Lato', sans-serif;
+}
+
+body, input, button, textarea{
   color: var(--font-color);
 }
 
@@ -39,7 +58,6 @@ button{
   width: 100%;
   text-align: left;
   border: none;
-  color: var(--font-color);
   padding: 10px;
   border-radius: 5px;
 
@@ -51,6 +69,12 @@ button{
 button.active{
   font-weight: bold;
   background-color: var(--bg-button-hover);
+}
+
+input{
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
 }
 
 header{
@@ -127,10 +151,6 @@ main{
       input{
         margin-left: auto;
         background-color: var(--bg-sidebar);
-        border: none;
-        padding: 10px;
-        border-radius: 5px;
-
       }
 
       p {
@@ -159,4 +179,114 @@ h1{
   font-weight: 900;
   font-size: 2.25rem;
   user-select: none;
+}
+
+.overlay{
+  top: 0;
+  left: 0;
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  @extend %center;
+  background-color: var(--bg-overlay);
+  display: none;
+
+  &.opened{
+    display: flex; 
+  }
+
+  .modal-window{
+    background-color: var(--bg-modal-window);
+    border-radius: 5px;
+    padding: 20px;
+    width: 300px;
+    font-size: 1.1rem;
+
+    h2{
+      margin-top: 0;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .form-group{
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    input{
+      border: var(--bg-header) 1px solid;
+      font-size: 1rem;
+    }
+
+    textarea{
+      height: 100px;
+      resize: vertical;
+    }
+
+    fieldset{
+      padding: 0;
+      margin: 0;
+      border: none;
+      @extend %center;
+      gap: 20px;
+
+      input {
+        position: relative;
+        appearance: none;
+        border-width: 1px;
+        height: 1.75rem;
+        margin: 0;
+        flex: 1;
+
+        &:checked{
+          border-color: currentColor;
+        }
+
+        &:nth-child(1):checked{
+          color: green;
+        }
+
+        &:nth-child(2):checked{
+          color:orange;
+        }
+
+        &:nth-child(3):checked{
+          color:red;
+        }
+      }
+
+      input::after{
+        @extend %position-center;
+      }
+
+      input:nth-child(1)::after{
+        content: 'Low';
+        color: inherit;
+      }
+
+      input:nth-child(2)::after{
+        content: 'Medium';
+        color: inherit;
+      }
+
+      input:nth-child(3)::after{
+        content: 'High';
+        color: inherit;
+      }
+    }
+
+    button{
+      font-size: 1rem;
+      margin-top: 1rem;
+      text-align: center;
+      background-color: var(--bg-header);
+      color: var(--font-light-color);
+
+      &:hover{
+        opacity: 0.8;
+      }
+    }
+  }
 }

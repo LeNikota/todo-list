@@ -10,6 +10,8 @@ export default function createDOM() {
   root.appendChild(new Element('header').appendChild(new Element('h1').setTextContent('Todo List')).build());
   root.appendChild(createMain());
   root.appendChild(createSidebar());
+  root.appendChild(createProjectModalWindow());
+  root.appendChild(createTaskModalWindow());
 }
 
 function createMain() {
@@ -23,6 +25,7 @@ function createMain() {
     .appendChild(new Element('button').addAttribute({class: 'add-task'})
       .appendChild(new Element('img').addAttribute({src: addIcon}))
       .appendChild(new Element('span').setTextContent('Add Task'))
+      .addEventListener({click: toggleTaskModalWindow})
     )
   ).build();
 }
@@ -43,7 +46,60 @@ function createSidebar() {
           .appendChild(new Element('img').addAttribute({src: closeIcon}))
         )
     ).appendChild(new Element('button').addAttribute({ class: 'add-project', type: 'button' })
+      .addEventListener({click: toggleProjectModalWindow})
       .appendChild(new Element('img').addAttribute({src: addIcon}))
       .appendChild(new Element('span').setTextContent('Add Project'))
     ).build();
+}
+
+function createProjectModalWindow() {
+  return new Element('div').addAttribute({ class: 'overlay', id: 'project-modal-window' })
+  .addEventListener({click: toggleProjectModalWindow})
+  .appendChild(new Element('form').addAttribute({ class: 'modal-window'})
+    .appendChild(new Element('h2').setTextContent('Add project'))
+    .appendChild(new Element('label').addAttribute({ class: 'form-group'})
+      .appendChild(new Element('span').setTextContent('Name: '))
+      .appendChild(new Element('input').addAttribute({required: ''}))
+    )
+    .appendChild(new Element('button').setTextContent('Add'))
+  ).build();
+}
+
+function createTaskModalWindow() {
+  return new Element('div').addAttribute({ class: 'overlay', id: 'task-modal-window' })
+  .addEventListener({click: toggleTaskModalWindow})
+  .appendChild(new Element('form').addAttribute({ class: 'modal-window'})
+    .appendChild(new Element('h2').setTextContent('Add task'))
+    .appendChild(new Element('label').addAttribute({ class: 'form-group'})
+      .appendChild(new Element('span').setTextContent('Name: '))
+      .appendChild(new Element('input').addAttribute({required: ''}))
+    )
+    .appendChild(new Element('label').addAttribute({ class: 'form-group'})
+      .appendChild(new Element('span').setTextContent('Due date: '))
+      .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date'}))
+    )
+    .appendChild(new Element('label').addAttribute({ class: 'form-group'})
+      .appendChild(new Element('span').setTextContent('Priority: '))
+      .appendChild(new Element('fieldset')
+        .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', required: ''}))
+        .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', required: ''}))
+        .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', required: ''}))
+      )
+    )
+    .appendChild(new Element('button').setTextContent('Add'))
+  ).build();
+}
+
+function toggleProjectModalWindow(e) {
+  const overlay = document.querySelector('#project-modal-window');
+  if(!e.target.closest('.modal-window')){
+    overlay.classList.toggle('opened')
+  }
+}
+
+function toggleTaskModalWindow(e) {
+  const overlay = document.querySelector('#task-modal-window');
+  if(!e.target.closest('.modal-window')){
+    overlay.classList.toggle('opened')
+  }
 }
