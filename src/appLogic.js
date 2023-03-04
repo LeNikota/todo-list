@@ -1,3 +1,10 @@
-import { formatDistance, subDays } from 'date-fns'
+import { Project } from "./Classes";
+import { PubSub } from "./PubSub";
 
-console.log();
+export default function initialize() {
+  PubSub.subscribe('Add project', createProject)
+}
+
+function createProject({project_name}) {
+  const project = new Project(project_name);
+}

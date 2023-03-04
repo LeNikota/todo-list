@@ -1,4 +1,4 @@
-import Element from "./classes";
+import Element from "./Classes";
 import { PubSub } from "./PubSub";
 import closeIcon from './icons/close_icon.svg';
 import addIcon from './icons/add_icon.svg';
@@ -56,10 +56,11 @@ function createProjectModalWindow() {
   return new Element('div').addAttribute({ class: 'overlay', id: 'project-modal-window' })
   .addEventListener({click: toggleProjectModalWindow})
   .appendChild(new Element('form').addAttribute({ class: 'modal-window'})
+    .addEventListener({submit: onProjectAddition})
     .appendChild(new Element('h2').setTextContent('Add project'))
     .appendChild(new Element('label').addAttribute({ class: 'form-group'})
       .appendChild(new Element('span').setTextContent('Name: '))
-      .appendChild(new Element('input').addAttribute({required: ''}))
+      .appendChild(new Element('input').addAttribute({name: 'project_name', required: ''}))
     )
     .appendChild(new Element('button').setTextContent('Add'))
   ).build();
@@ -107,6 +108,12 @@ function toggleTaskModalWindow(e) {
 
 function onTaskAddition(e) {
   e.preventDefault();
-  const data = Object.fromEntries(new FormData(e.target).entries());
-  PubSub.publish('Add task', data);
+  const formDataObject = Object.fromEntries(new FormData(e.target).entries());
+  PubSub.publish('Add task', formDataObject);
+}
+
+function onProjectAddition(e) {
+  e.preventDefault();
+  const formDataObject = Object.fromEntries(new FormData(e.target).entries());
+  PubSub.publish('Add project', formDataObject);
 }
