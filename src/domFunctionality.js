@@ -12,6 +12,8 @@ export default function createDOM() {
   root.appendChild(createSidebar());
   root.appendChild(createProjectModalWindow());
   root.appendChild(createTaskModalWindow());
+
+  PubSub.subscribe('Open project', openProject)
 }
 
 function createMain() {
@@ -22,7 +24,7 @@ function createMain() {
       .appendChild(new Element('p').setTextContent('Go to the odin project and programme').addAttribute({class: 'task-description'}))
       .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date'}))
     )
-    .appendChild(new Element('button').addAttribute({class: 'add-task'})
+    .appendChild(new Element('button').addAttribute({class: 'add-task', type: 'button'})
       .appendChild(new Element('img').addAttribute({src: addIcon}))
       .appendChild(new Element('span').setTextContent('Add Task'))
       .addEventListener({click: toggleTaskModalWindow})
@@ -40,12 +42,8 @@ function createSidebar() {
         .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('All time').addEventListener({'click': ()=> PubSub.publish('Calender button click', 'all time')}))
     )
     .appendChild(new Element('h2').setTextContent('Projects'))
-    .appendChild(new Element('div').addAttribute({ class: 'project-list' })
-        .appendChild(new Element('button').addAttribute({ class: 'project', type: 'button' })
-          .appendChild(new Element('span').setTextContent('Become a programmer'))
-          .appendChild(new Element('img').addAttribute({src: closeIcon}))
-        )
-    ).appendChild(new Element('button').addAttribute({ class: 'add-project', type: 'button' })
+    .appendChild(new Element('div').addAttribute({ class: 'project-list' }))
+    .appendChild(new Element('button').addAttribute({ class: 'add-project', type: 'button' })
       .addEventListener({click: toggleProjectModalWindow})
       .appendChild(new Element('img').addAttribute({src: addIcon}))
       .appendChild(new Element('span').setTextContent('Add Project'))
@@ -94,26 +92,74 @@ function createTaskModalWindow() {
 
 function toggleProjectModalWindow(e) {
   const overlay = document.querySelector('#project-modal-window');
-  if(!e.target.closest('.modal-window')){
+  const formElement = e.target.closest('.modal-window');
+  if(e.target.type === 'submit'){
+    if(formElement.reportValidity()){
+      overlay.classList.toggle('opened');
+    }
+  }
+  if(!formElement){
     overlay.classList.toggle('opened')
   }
 }
 
 function toggleTaskModalWindow(e) {
   const overlay = document.querySelector('#task-modal-window');
-  if(!e.target.closest('.modal-window')){
+  const formElement = e.target.closest('.modal-window');
+  if(e.target.type === 'submit'){
+    if(formElement.reportValidity()){
+      overlay.classList.toggle('opened');
+    }
+  }
+  if(!formElement){
     overlay.classList.toggle('opened')
   }
 }
 
 function onTaskAddition(e) {
   e.preventDefault();
-  const formDataObject = Object.fromEntries(new FormData(e.target).entries());
-  PubSub.publish('Add task', formDataObject);
+  const taskData = Object.fromEntries(new FormData(e.target).entries());
+  PubSub.publish('Add task', taskData);
 }
 
 function onProjectAddition(e) {
   e.preventDefault();
-  const formDataObject = Object.fromEntries(new FormData(e.target).entries());
-  PubSub.publish('Add project', formDataObject);
+  const projectData = Object.fromEntries(new FormData(e.target).entries());
+  addProjectElementToList(projectData);
+  PubSub.publish('Add project', projectData);
+}
+
+function addProjectElementToList({project_name}){
+  const projectList = document.querySelector('.project-list');
+  projectList.appendChild(new Element('button').addAttribute({ class: 'project', type: 'button' })
+        .addEventListener({click: handleProjectClick})
+        .appendChild(new Element('span').setTextContent(project_name))
+        .appendChild(new Element('img').addAttribute({src: closeIcon}))
+        .build()
+      )
+}
+
+function clearProjectDisplay() {
+  const projectDisplay = document.querySelector('.project-display');
+  projectDisplay.innerHTML = '';
+}
+
+function openProject(project) {
+  const projectDisplay = document.querySelector('.project-display');
+  projectDisplay.appendChild(new Element('h2').setTextContent(project.getName()).build());
+  // projectDisplay.appendChild(
+  //   project.map(e=> )
+  // )
+  projectDisplay.appendChild(new Element('button').addAttribute({class: 'add-task', type: 'button'})
+    .appendChild(new Element('img').addAttribute({src: addIcon}))
+    .appendChild(new Element('span').setTextContent('Add Task'))
+    .addEventListener({click: toggleTaskModalWindow})
+    .build()
+  )
+}
+
+function handleProjectClick(e) {
+  const projectName = this.children[0].textContent;
+  clearProjectDisplay();
+  PubSub.publish('Project click', projectName);
 }

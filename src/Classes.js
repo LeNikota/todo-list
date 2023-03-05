@@ -61,8 +61,8 @@ export default class Element {
 }
 
 export class Task {
-  constructor(title, dueDate, priority){
-    this.title = title;
+  constructor(name, dueDate, priority){
+    this.name = name;
     this.dueDate = dueDate;
     this.priority = priority;
     this.complete = false;
@@ -70,13 +70,36 @@ export class Task {
 }
 
 export class Project {
-  constructor(title){
-    this.title = title;
+  constructor(name){
+    this.name = name;
     this.tasks = [];
+    this.active = false;
+    this.addProject(this);
   }
 
-  appendToDo(toDo) {
-    this.toDos.push(toDo);
+  static allProjects = [];
+
+  static getAllProjects(){
+    return Project.allProjects;
+  }
+
+  appendToDo(task) {
+    this.tasks.push(task);
+  }
+
+  getName(){
+    return this.name;
+  }
+  
+  getTasks(){
+    return this.tasks;
+  }
+
+  addProject(project){
+    Project.allProjects.push(project);
+  }
+
+  activate(){
+    this.active = !this.active;
   }
 }
-
