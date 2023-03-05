@@ -74,13 +74,30 @@ export class Project {
     this.name = name;
     this.tasks = [];
     this.active = false;
-    this.addProject(this);
+    Project.addProject(this);
   }
 
   static allProjects = [];
 
   static getAllProjects(){
     return Project.allProjects;
+  }
+
+  static findProject(projectName) {
+    return Project.allProjects.find((project) => project.getName() === projectName);
+  }
+
+  static addProject(project){
+    Project.allProjects.push(project);
+  }
+
+  static addTask(name, dueDate, priority){
+    const project = Project.getActiveProject();
+    project.tasks.push(new Task(name, dueDate, priority))
+  }
+
+  static getActiveProject(){
+    return Project.allProjects.find((project) => project.active === true);
   }
 
   appendToDo(task) {
@@ -95,11 +112,12 @@ export class Project {
     return this.tasks;
   }
 
-  addProject(project){
-    Project.allProjects.push(project);
+  activate(){
+    Project.allProjects.forEach((project) => project.active = false)
+    this.active = true;
   }
 
-  activate(){
-    this.active = !this.active;
+  open(){
+    this.activate();
   }
 }

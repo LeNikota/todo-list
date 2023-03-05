@@ -46,7 +46,7 @@ function createSidebar() {
     .appendChild(new Element('button').addAttribute({ class: 'add-project', type: 'button' })
       .addEventListener({click: toggleProjectModalWindow})
       .appendChild(new Element('img').addAttribute({src: addIcon}))
-      .appendChild(new Element('span').setTextContent('Add Project'))
+      .appendChild(new Element('span').setTextContent('Create Project'))
     ).build();
 }
 
@@ -55,12 +55,12 @@ function createProjectModalWindow() {
   .addEventListener({click: toggleProjectModalWindow})
   .appendChild(new Element('form').addAttribute({ class: 'modal-window'})
     .addEventListener({submit: onProjectAddition})
-    .appendChild(new Element('h2').setTextContent('Add project'))
+    .appendChild(new Element('h2').setTextContent('Create project'))
     .appendChild(new Element('label').addAttribute({ class: 'form-group'})
       .appendChild(new Element('span').setTextContent('Name: '))
       .appendChild(new Element('input').addAttribute({name: 'project_name', required: ''}))
     )
-    .appendChild(new Element('button').setTextContent('Add'))
+    .appendChild(new Element('button').setTextContent('Create'))
   ).build();
 }
 
@@ -126,7 +126,7 @@ function onProjectAddition(e) {
   e.preventDefault();
   const projectData = Object.fromEntries(new FormData(e.target).entries());
   addProjectElementToList(projectData);
-  PubSub.publish('Add project', projectData);
+  PubSub.publish('Create project', projectData);
 }
 
 function addProjectElementToList({project_name}){
@@ -147,9 +147,11 @@ function clearProjectDisplay() {
 function openProject(project) {
   const projectDisplay = document.querySelector('.project-display');
   projectDisplay.appendChild(new Element('h2').setTextContent(project.getName()).build());
-  // projectDisplay.appendChild(
-  //   project.map(e=> )
-  // )
+  if(project.task){
+    project.tasks.map(task => {
+      
+    })
+  }
   projectDisplay.appendChild(new Element('button').addAttribute({class: 'add-task', type: 'button'})
     .appendChild(new Element('img').addAttribute({src: addIcon}))
     .appendChild(new Element('span').setTextContent('Add Task'))
@@ -158,7 +160,7 @@ function openProject(project) {
   )
 }
 
-function handleProjectClick(e) {
+function handleProjectClick() {
   const projectName = this.children[0].textContent;
   clearProjectDisplay();
   PubSub.publish('Project click', projectName);
