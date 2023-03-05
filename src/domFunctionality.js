@@ -3,6 +3,7 @@ import { PubSub } from "./PubSub";
 import closeIcon from './icons/close_icon.svg';
 import addIcon from './icons/add_icon.svg';
 import incompleteIcon from './icons/task_incomplete.svg';
+import { de } from "date-fns/locale";
 
 export default function createDOM() {
   const root = document.querySelector('body');
@@ -19,11 +20,6 @@ export default function createDOM() {
 function createMain() {
   return new Element('main').appendChild(new Element('div').addAttribute({class: 'project-display'})
     .appendChild(new Element('h2').setTextContent('Today'))
-    .appendChild(new Element('button').addAttribute({class: 'task'})
-      .appendChild(new Element('img').addAttribute({class: 'task-state', src: incompleteIcon}))
-      .appendChild(new Element('p').setTextContent('Go to the odin project and programme').addAttribute({class: 'task-description'}))
-      .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date'}))
-    )
     .appendChild(new Element('button').addAttribute({class: 'add-task', type: 'button'})
       .appendChild(new Element('img').addAttribute({src: addIcon}))
       .appendChild(new Element('span').setTextContent('Add Task'))
@@ -145,12 +141,19 @@ function clearProjectDisplay() {
 }
 
 function openProject(project) {
+  clearProjectDisplay();
   const projectDisplay = document.querySelector('.project-display');
   projectDisplay.appendChild(new Element('h2').setTextContent(project.getName()).build());
-  if(project.task){
+  if(project.tasks){
     project.tasks.map(task => {
-      
-    })
+      return new Element('button').addAttribute({class: 'task'})
+        .appendChild(new Element('img').addAttribute({class: 'task-state', src: incompleteIcon}))
+        .appendChild(new Element('p').setTextContent(task.name).addAttribute({class: 'task-description'}))
+        .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date', value: task.dueDate}))
+        .build()
+    }).forEach(element => {
+      projectDisplay.appendChild(element);
+    });
   }
   projectDisplay.appendChild(new Element('button').addAttribute({class: 'add-task', type: 'button'})
     .appendChild(new Element('img').addAttribute({src: addIcon}))
@@ -162,6 +165,5 @@ function openProject(project) {
 
 function handleProjectClick() {
   const projectName = this.children[0].textContent;
-  clearProjectDisplay();
   PubSub.publish('Project click', projectName);
 }
