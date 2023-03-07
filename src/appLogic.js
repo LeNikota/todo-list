@@ -9,7 +9,7 @@ export default function initialize() {
 }
 
 function createProject({ project_name }) {
-  new Project(project_name);
+  Project.addProject(new Project(project_name));
 }
 
 function openProject(projectName) {

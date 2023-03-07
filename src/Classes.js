@@ -74,7 +74,6 @@ export class Project {
     this.name = name;
     this.tasks = [];
     this.active = false;
-    Project.addProject(this);
   }
 
   static allProjects = [];
