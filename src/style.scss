@@ -90,6 +90,10 @@ img{
   height: 0.9rem;
 }
 
+span{
+  word-break: break-all; 
+}
+
 .sidebar{
   grid-area: sidebar;
   background-color: var(--bg-sidebar);
@@ -110,14 +114,23 @@ img{
 
   .project{
     justify-content: space-between;
-    
+
+    span{
+      margin-right: auto;
+    }
+
+    .edit{
+      display: none;
+    }
+
     img{
       visibility: hidden;
     }
 
     &:hover{
       img{
-        visibility: visible;
+        visibility: initial;
+        display: initial;
       }
     }
   }

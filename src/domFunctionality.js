@@ -1,8 +1,9 @@
 import Element from "./Classes";
 import { PubSub } from "./PubSub";
-import closeIcon from './icons/close_icon.svg';
-import addIcon from './icons/add_icon.svg';
-import incompleteIcon from './icons/task_incomplete.svg';
+import deleteIcon from './icons/delete.svg';
+import addIcon from './icons/add.svg';
+import incompleteIcon from './icons/incomplete.svg';
+import editIcon from './icons/edit.svg';
 
 export default function createDOM() {
   const root = document.querySelector('body');
@@ -35,6 +36,9 @@ function createSidebar() {
       .appendChild(new Element('span').setTextContent('Create Project'))
     ).build();
 }
+
+let isEditing = false;
+let elementNameIsEditing = '';
 
 function createProjectModalWindow() {
   return new Element('div').addAttribute({ class: 'overlay', id: 'project-modal-window' })
@@ -79,53 +83,62 @@ function createTaskModalWindow() {
 
 function toggleProjectModalWindow(e) {
   const overlay = document.querySelector('#project-modal-window');
+
+  if(e == null){
+    overlay.classList.toggle('opened');
+    return;
+  }
+
   const formElement = e.target.closest('.modal-window');
   if(e.target.type === 'submit'){
     if(formElement.reportValidity()){
       overlay.classList.toggle('opened');
     }
   }
-  if(!formElement){
-    overlay.classList.toggle('opened')
+  if(formElement == null){
+    overlay.classList.toggle('opened');
+    isEditing = false;
   }
 }
 
 function toggleTaskModalWindow(e) {
   const overlay = document.querySelector('#task-modal-window');
+
+  if(e == null){
+    overlay.classList.toggle('opened');
+    return;
+  }
+
   const formElement = e.target.closest('.modal-window');
   if(e.target.type === 'submit'){
     if(formElement.reportValidity()){
       overlay.classList.toggle('opened');
     }
   }
-  if(!formElement){
+  if(formElement == null){
     overlay.classList.toggle('opened')
+    isEditing = false;
   }
 }
 
 function onProjectAddition(e) {
   e.preventDefault();
   const projectData = Object.fromEntries(new FormData(e.target).entries());
-  PubSub.publish('Add project', projectData);
+  if(isEditing){
+    PubSub.publish('Project edit', [elementNameIsEditing, projectData]);
+    isEditing = false;
+    elementNameIsEditing = '';
+  }else{
+    PubSub.publish('Add project', projectData);
+  }
+  this.reset();
 }
 
 function onTaskAddition(e) {
   e.preventDefault();
   const taskData = Object.fromEntries(new FormData(e.target).entries());
   PubSub.publish('Add task', taskData);
-}
-
-function updateProjectList(projectArray){
-  const projectList = document.querySelector('.project-list');
-  projectArray.map(project => {
-    return new Element('button').addAttribute({ class: 'project', type: 'button' })
-      .addEventListener({click: handleProjectClick})
-      .appendChild(new Element('span').setTextContent(project.getName()))
-      .appendChild(new Element('img').addAttribute({class: 'delete', src: closeIcon}))
-      .build()
-  }).forEach(project => {
-    projectList.appendChild(project)
-  })
+  this.reset();
 }
 
 function clearProjectDisplay() {
@@ -133,8 +146,30 @@ function clearProjectDisplay() {
   projectDisplay.innerHTML = '';
 }
 
+function clearProjectList() {
+  const projectDisplay = document.querySelector('.project-list');
+  projectDisplay.innerHTML = '';
+}
+
+function updateProjectList(projectArray){
+  clearProjectList();
+
+  const projectList = document.querySelector('.project-list');
+  projectArray.map(project => {
+    return new Element('button').addAttribute({ class: 'project', type: 'button' })
+      .addEventListener({click: handleProjectClick})
+      .appendChild(new Element('span').setTextContent(project.getName()))
+      .appendChild(new Element('img').addAttribute({class: 'edit', src: editIcon}))
+      .appendChild(new Element('img').addAttribute({class: 'delete', src: deleteIcon}))
+      .build()
+  }).forEach(project => {
+    projectList.appendChild(project)
+  })
+}
+
 function openProject(project) {
   clearProjectDisplay();
+
   const projectDisplay = document.querySelector('.project-display');
   projectDisplay.appendChild(new Element('h2').setTextContent(project.getName()).build());
   if(project.tasks){
@@ -143,7 +178,7 @@ function openProject(project) {
         .appendChild(new Element('img').addAttribute({class: 'task-state', src: incompleteIcon}))
         .appendChild(new Element('p').setTextContent(task.name).addAttribute({class: 'task-description'}))
         .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date', disabled: '', value: task.dueDate}))
-        .appendChild(new Element('img').addAttribute({src: closeIcon}))
+        .appendChild(new Element('img').addAttribute({src: deleteIcon}))
         .addEventListener({click: handleTaskClick})
         .build()
     }).forEach(element => {
@@ -160,11 +195,17 @@ function openProject(project) {
 
 function handleProjectClick(e) {
   const projectName = this.children[0].textContent;
-  if(e.target.className === 'delete'){
-    PubSub.publish('Project delete', projectName);
-  }
-  else{
-    PubSub.publish('Project click', projectName);
+  switch (e.target.className) {
+    case 'edit':
+      isEditing = true;
+      elementNameIsEditing = projectName;
+      toggleProjectModalWindow();
+      break;
+    case 'delete':
+      PubSub.publish('Project delete', projectName);
+      break;
+    default:
+      PubSub.publish('Project click', projectName);
   }
 }
 
