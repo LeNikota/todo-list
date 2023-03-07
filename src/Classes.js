@@ -79,6 +79,8 @@ export class Project {
 
   static allProjects = [];
 
+  static activeProject = null;
+
   static getAllProjects(){
     return Project.allProjects;
   }
@@ -91,17 +93,16 @@ export class Project {
     Project.allProjects.push(project);
   }
 
-  static addTask(name, dueDate, priority){
-    const project = Project.getActiveProject();
-    project.tasks.push(new Task(name, dueDate, priority))
+  static addTaskToActiveProject(name, dueDate, priority){
+    Project.activeProject.tasks.push(new Task(name, dueDate, priority))
   }
 
   static getActiveProject(){
-    return Project.allProjects.find((project) => project.active === true);
+    return Project.activeProject;
   }
 
-  appendToDo(task) {
-    this.tasks.push(task);
+  addTask(name, dueDate, priority){
+    this.tasks.push(new Task(name, dueDate, priority))
   }
 
   getName(){
@@ -112,12 +113,20 @@ export class Project {
     return this.tasks;
   }
 
-  activate(){
-    Project.allProjects.forEach((project) => project.active = false)
+  open(){
+    if(Project.activeProject){
+      Project.activeProject.close();
+    }
     this.active = true;
+    Project.activeProject = this;
   }
 
-  open(){
-    this.activate();
+  close(){
+    this.active = false;
+    Project.activeProject = null;
+  }
+
+  delete(){
+    Project.allProjects = Project.allProjects.filter((project) => project !== this);
   }
 }

@@ -3,7 +3,6 @@ import { PubSub } from "./PubSub";
 import closeIcon from './icons/close_icon.svg';
 import addIcon from './icons/add_icon.svg';
 import incompleteIcon from './icons/task_incomplete.svg';
-import { de } from "date-fns/locale";
 
 export default function createDOM() {
   const root = document.querySelector('body');
@@ -15,17 +14,11 @@ export default function createDOM() {
   root.appendChild(createTaskModalWindow());
 
   PubSub.subscribe('Open project', openProject)
+  PubSub.subscribe('Clear project display', clearProjectDisplay)
 }
 
 function createMain() {
-  return new Element('main').appendChild(new Element('div').addAttribute({class: 'project-display'})
-    .appendChild(new Element('h2').setTextContent('Today'))
-    .appendChild(new Element('button').addAttribute({class: 'add-task', type: 'button'})
-      .appendChild(new Element('img').addAttribute({src: addIcon}))
-      .appendChild(new Element('span').setTextContent('Add Task'))
-      .addEventListener({click: toggleTaskModalWindow})
-    )
-  ).build();
+  return new Element('main').appendChild(new Element('div').addAttribute({class: 'project-display'})).build();
 }
 
 function createSidebar() {
@@ -130,7 +123,7 @@ function addProjectElementToList({project_name}){
   projectList.appendChild(new Element('button').addAttribute({ class: 'project', type: 'button' })
         .addEventListener({click: handleProjectClick})
         .appendChild(new Element('span').setTextContent(project_name))
-        .appendChild(new Element('img').addAttribute({src: closeIcon}))
+        .appendChild(new Element('img').addAttribute({class: 'delete', src: closeIcon}))
         .build()
       )
 }
@@ -149,7 +142,9 @@ function openProject(project) {
       return new Element('button').addAttribute({class: 'task'})
         .appendChild(new Element('img').addAttribute({class: 'task-state', src: incompleteIcon}))
         .appendChild(new Element('p').setTextContent(task.name).addAttribute({class: 'task-description'}))
-        .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date', value: task.dueDate}))
+        .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date', disabled: '', value: task.dueDate}))
+        .appendChild(new Element('img').addAttribute({src: closeIcon}))
+        .addEventListener({click: handleTaskClick})
         .build()
     }).forEach(element => {
       projectDisplay.appendChild(element);
@@ -163,7 +158,17 @@ function openProject(project) {
   )
 }
 
-function handleProjectClick() {
+function handleProjectClick(e) {
   const projectName = this.children[0].textContent;
-  PubSub.publish('Project click', projectName);
+  if(e.target.className === 'delete'){
+    PubSub.publish('Project delete', projectName);
+  }
+  else{
+    PubSub.publish('Project click', projectName);
+  }
+}
+
+function handleTaskClick(e) {
+  
+  console.log(e.target);
 }

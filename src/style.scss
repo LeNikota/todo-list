@@ -159,6 +159,16 @@ main{
       img {
         height: 1.5rem;
       }
+
+      img:nth-child(n + 2){
+        visibility: hidden;
+      }
+  
+      &:hover{
+        img{
+          visibility: visible;
+        }
+      }
     }
 
     .add-task{
@@ -183,7 +193,7 @@ h1{
 .overlay{
   top: 0;
   left: 0;
-  position: absolute;
+  position: fixed;
   height: 100vh;
   width: 100vw;
   @extend %center;
