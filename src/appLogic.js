@@ -2,14 +2,15 @@ import { Project } from "./Classes";
 import { PubSub } from "./PubSub";
 
 export default function initialize() {
-  PubSub.subscribe("Create project", createProject);
+  PubSub.subscribe("Add project", addProject);
   PubSub.subscribe("Add task", addTask);
   PubSub.subscribe("Project click", openProject);
   PubSub.subscribe('Project delete', deleteProject);
 }
 
-function createProject({ project_name }) {
+function addProject({ project_name }) {
   Project.addProject(new Project(project_name));
+  PubSub.publish('Update project list', Project.allProjects);
 }
 
 function openProject(projectName) {

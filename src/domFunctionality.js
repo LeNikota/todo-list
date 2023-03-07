@@ -8,17 +8,14 @@ export default function createDOM() {
   const root = document.querySelector('body');
 
   root.appendChild(new Element('header').appendChild(new Element('h1').setTextContent('Todo List')).build());
-  root.appendChild(createMain());
+  root.appendChild(new Element('main').appendChild(new Element('div').addAttribute({class: 'project-display'})).build());
   root.appendChild(createSidebar());
   root.appendChild(createProjectModalWindow());
   root.appendChild(createTaskModalWindow());
 
   PubSub.subscribe('Open project', openProject)
+  PubSub.subscribe('Update project list', updateProjectList)
   PubSub.subscribe('Clear project display', clearProjectDisplay)
-}
-
-function createMain() {
-  return new Element('main').appendChild(new Element('div').addAttribute({class: 'project-display'})).build();
 }
 
 function createSidebar() {
@@ -79,6 +76,7 @@ function createTaskModalWindow() {
   ).build();
 }
 
+
 function toggleProjectModalWindow(e) {
   const overlay = document.querySelector('#project-modal-window');
   const formElement = e.target.closest('.modal-window');
@@ -105,27 +103,29 @@ function toggleTaskModalWindow(e) {
   }
 }
 
+function onProjectAddition(e) {
+  e.preventDefault();
+  const projectData = Object.fromEntries(new FormData(e.target).entries());
+  PubSub.publish('Add project', projectData);
+}
+
 function onTaskAddition(e) {
   e.preventDefault();
   const taskData = Object.fromEntries(new FormData(e.target).entries());
   PubSub.publish('Add task', taskData);
 }
 
-function onProjectAddition(e) {
-  e.preventDefault();
-  const projectData = Object.fromEntries(new FormData(e.target).entries());
-  addProjectElementToList(projectData);
-  PubSub.publish('Create project', projectData);
-}
-
-function addProjectElementToList({project_name}){
+function updateProjectList(projectArray){
   const projectList = document.querySelector('.project-list');
-  projectList.appendChild(new Element('button').addAttribute({ class: 'project', type: 'button' })
-        .addEventListener({click: handleProjectClick})
-        .appendChild(new Element('span').setTextContent(project_name))
-        .appendChild(new Element('img').addAttribute({class: 'delete', src: closeIcon}))
-        .build()
-      )
+  projectArray.map(project => {
+    return new Element('button').addAttribute({ class: 'project', type: 'button' })
+      .addEventListener({click: handleProjectClick})
+      .appendChild(new Element('span').setTextContent(project.getName()))
+      .appendChild(new Element('img').addAttribute({class: 'delete', src: closeIcon}))
+      .build()
+  }).forEach(project => {
+    projectList.appendChild(project)
+  })
 }
 
 function clearProjectDisplay() {
