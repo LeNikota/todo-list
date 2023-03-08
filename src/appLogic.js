@@ -11,29 +11,25 @@ export default function initialize() {
 
 function addProject({ project_name }) {
   Project.addProject(new Project(project_name));
-  PubSub.publish('Update project list', Project.getAllProjects());
+  PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
 }
 
 function openProject(projectName) {
   const project = Project.findProject(projectName);
   project.open();
-  PubSub.publish("Open project", project);
+  PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
 }
 
 function editProject([oldName, {project_name}]) {
   const project = Project.findProject(oldName);
   project.setName(project_name);
-  PubSub.publish("Update project list", Project.getAllProjects())
-  console.log(Project.getAllProjects());
+  PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
 }
 
 function deleteProject(projectName) {
   const project = Project.findProject(projectName);
-  if(Project.getActiveProject() === project){ 
-    PubSub.publish('Clear project display');
-  }
   project.delete();
-  PubSub.publish('Update project list', Project.getAllProjects());
+  PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
 }
 
 function addTask({ task_name, task_due, priority }) {

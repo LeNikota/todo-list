@@ -130,6 +130,9 @@ export class Project {
   }
 
   delete(){
+    if(this.active === true){
+      Project.activeProject = null;
+    }
     Project.allProjects = Project.allProjects.filter((project) => project !== this);
   }
 }

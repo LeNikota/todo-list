@@ -14,9 +14,7 @@ export default function createDOM() {
   root.appendChild(createProjectModalWindow());
   root.appendChild(createTaskModalWindow());
 
-  PubSub.subscribe('Open project', openProject)
-  PubSub.subscribe('Update project list', updateProjectList)
-  PubSub.subscribe('Clear project display', clearProjectDisplay)
+  PubSub.subscribe('Update DOM', updateDOM)  
 }
 
 function createSidebar() {
@@ -141,56 +139,57 @@ function onTaskAddition(e) {
   this.reset();
 }
 
-function clearProjectDisplay() {
-  const projectDisplay = document.querySelector('.project-display');
-  projectDisplay.innerHTML = '';
-}
-
-function clearProjectList() {
-  const projectDisplay = document.querySelector('.project-list');
-  projectDisplay.innerHTML = '';
-}
-
-function updateProjectList(projectArray){
-  clearProjectList();
-
-  const projectList = document.querySelector('.project-list');
-  projectArray.map(project => {
-    return new Element('button').addAttribute({ class: 'project', type: 'button' })
-      .addEventListener({click: handleProjectClick})
-      .appendChild(new Element('span').setTextContent(project.getName()))
-      .appendChild(new Element('img').addAttribute({class: 'edit', src: editIcon}))
-      .appendChild(new Element('img').addAttribute({class: 'delete', src: deleteIcon}))
-      .build()
-  }).forEach(project => {
-    projectList.appendChild(project)
-  })
-}
-
-function openProject(project) {
-  clearProjectDisplay();
-
-  const projectDisplay = document.querySelector('.project-display');
-  projectDisplay.appendChild(new Element('h2').setTextContent(project.getName()).build());
-  if(project.tasks){
-    project.tasks.map(task => {
-      return new Element('button').addAttribute({class: 'task'})
-        .appendChild(new Element('img').addAttribute({class: 'task-state', src: incompleteIcon}))
-        .appendChild(new Element('p').setTextContent(task.name).addAttribute({class: 'task-description'}))
-        .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date', disabled: '', value: task.dueDate}))
-        .appendChild(new Element('img').addAttribute({src: deleteIcon}))
-        .addEventListener({click: handleTaskClick})
-        .build()
-    }).forEach(element => {
-      projectDisplay.appendChild(element);
-    });
+function updateDOM({allProjects, taskContainer}) {
+  function clearDOM() {
+    const taskDisplay = document.querySelector('.project-display');
+    const projectList = document.querySelector('.project-list');
+    taskDisplay.innerHTML = '';
+    projectList.innerHTML = '';
   }
-  projectDisplay.appendChild(new Element('button').addAttribute({class: 'add-task', type: 'button'})
-    .appendChild(new Element('img').addAttribute({src: addIcon}))
-    .appendChild(new Element('span').setTextContent('Add Task'))
-    .addEventListener({click: toggleTaskModalWindow})
-    .build()
-  )
+  function updateProjectsListDisplay(projectArray){
+    if(projectArray == null) return;
+
+    const projectList = document.querySelector('.project-list');
+    projectArray.map(project => {
+      return new Element('button').addAttribute({ class: 'project', type: 'button' })
+        .addEventListener({click: handleProjectClick})
+        .appendChild(new Element('span').setTextContent(project.getName()))
+        .appendChild(new Element('img').addAttribute({class: 'edit', src: editIcon}))
+        .appendChild(new Element('img').addAttribute({class: 'delete', src: deleteIcon}))
+        .build()
+    }).forEach(project => {
+      projectList.appendChild(project)
+    })
+  }
+  function updateTasksDisplay(project) {
+    if(project == null) return;
+
+    const projectDisplay = document.querySelector('.project-display');
+    projectDisplay.appendChild(new Element('h2').setTextContent(project.getName()).build());
+    if(project.tasks){
+      project.tasks.map(task => {
+        return new Element('button').addAttribute({class: 'task'})
+          .appendChild(new Element('img').addAttribute({class: 'task-state', src: incompleteIcon}))
+          .appendChild(new Element('p').setTextContent(task.name).addAttribute({class: 'task-description'}))
+          .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date', disabled: '', value: task.dueDate}))
+          .appendChild(new Element('img').addAttribute({src: deleteIcon}))
+          .addEventListener({click: handleTaskClick})
+          .build()
+      }).forEach(element => {
+        projectDisplay.appendChild(element);
+      });
+    }
+    projectDisplay.appendChild(new Element('button').addAttribute({class: 'add-task', type: 'button'})
+      .appendChild(new Element('img').addAttribute({src: addIcon}))
+      .appendChild(new Element('span').setTextContent('Add Task'))
+      .addEventListener({click: toggleTaskModalWindow})
+      .build()
+    )
+  }
+
+  clearDOM();
+  updateProjectsListDisplay(allProjects);
+  updateTasksDisplay(taskContainer);
 }
 
 function handleProjectClick(e) {
