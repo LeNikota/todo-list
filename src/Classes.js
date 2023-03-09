@@ -124,6 +124,10 @@ export class Project {
     return this.tasks.find((task) => task.name === name);
   }
 
+  deleteTask(name) {
+    this.tasks = this.tasks.filter((task) => task.name !== name);
+  }
+
   getName(){
     return this.name;
   }
@@ -156,27 +160,3 @@ export class Project {
     Project.allProjects = Project.allProjects.filter((project) => project !== this);
   }
 }
-
-// class ModalWindow {
-//   #_
-//   #_init(){
-//     const root = document.querySelector('body');
-
-//     root.appendChild(new Element('div').addAttribute({ class: 'overlay', id: 'project-modal-window' })
-//       .addEventListener({click: toggleProjectModalWindow})
-//       .appendChild(new Element('form').addAttribute({ class: 'modal-window'})
-//         .addEventListener({submit: onProjectAddition})
-//         .appendChild(new Element('h2').setTextContent('Create project'))
-//         .appendChild(new Element('label').addAttribute({ class: 'form-group'})
-//           .appendChild(new Element('span').setTextContent('Name: '))
-//           .appendChild(new Element('input').addAttribute({name: 'project_name', required: ''}))
-//         )
-//         .appendChild(new Element('button').setTextContent('Create'))
-//       ).build()
-//     )
-//   }
-
-//   open(){
-
-//   }
-// }

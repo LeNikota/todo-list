@@ -9,6 +9,7 @@ export default function initialize() {
   PubSub.subscribe("Task add", addTask);
   PubSub.subscribe("Task edit", editTask);
   PubSub.subscribe("Task complete", completeTask);
+  PubSub.subscribe("Task delete", deleteTask);
 }
 
 function addProject({ project_name }) {
@@ -50,6 +51,27 @@ function editTask([oldName, newTask]) {
 function completeTask(name) {
   const task = Project.getActiveProject().findTask(name);
   task.toggleCompletion()
-  console.log(task.complete);///-delete
   PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
 }
+
+function deleteTask(name) {
+  const project = Project.getActiveProject();
+  project.deleteTask(name)
+  PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
+}
+
+/*
+
+
+
+
+
+//check when there is a repeating name in projects' and tasks' names
+//display all tasks within all time, month, week, day, 
+
+
+
+
+
+
+*/
