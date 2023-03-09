@@ -127,7 +127,7 @@ function onProjectAddition(e) {
     isEditing = false;
     elementNameIsEditing = '';
   }else{
-    PubSub.publish('Add project', projectData);
+    PubSub.publish('Project add', projectData);
   }
   this.reset();
 }
@@ -135,7 +135,13 @@ function onProjectAddition(e) {
 function onTaskAddition(e) {
   e.preventDefault();
   const taskData = Object.fromEntries(new FormData(e.target).entries());
-  PubSub.publish('Add task', taskData);
+  if(isEditing){
+    PubSub.publish('Task edit', [elementNameIsEditing, taskData]);
+    isEditing = false;
+    elementNameIsEditing = '';
+  }else{
+    PubSub.publish('Task add', taskData);
+  }
   this.reset();
 }
 
@@ -172,7 +178,8 @@ function updateDOM({allProjects, taskContainer}) {
           .appendChild(new Element('img').addAttribute({class: 'task-state', src: incompleteIcon}))
           .appendChild(new Element('p').setTextContent(task.name).addAttribute({class: 'task-description'}))
           .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date', disabled: '', value: task.dueDate}))
-          .appendChild(new Element('img').addAttribute({src: deleteIcon}))
+          .appendChild(new Element('img').addAttribute({class: 'edit', src: editIcon}))
+          .appendChild(new Element('img').addAttribute({class: 'delete', src: deleteIcon}))
           .addEventListener({click: handleTaskClick})
           .build()
       }).forEach(element => {
@@ -209,6 +216,18 @@ function handleProjectClick(e) {
 }
 
 function handleTaskClick(e) {
-  
-  console.log(e.target);
+  const taskName = this.children[1].textContent;
+  switch (e.target.className) {
+    case 'complete':
+      PubSub.publish('Task complete', taskName);
+      break;
+    case 'edit':
+      isEditing = true;
+      elementNameIsEditing = taskName;
+      toggleTaskModalWindow();
+      break;
+    case 'delete':
+      PubSub.publish('Task delete', taskName);
+      break;
+  }
 }

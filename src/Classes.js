@@ -67,6 +67,26 @@ export class Task {
     this.priority = priority;
     this.complete = false;
   }
+
+  setName(name){
+    this.name = name;
+  }
+
+  setDueDate(dueDate){
+    this.dueDate = dueDate;
+  }
+
+  setPriority(priority){
+    this.priority = priority;
+  }
+
+  complete(){
+    this.complete = true;
+  }
+
+  uncomplete(){
+    this.complete = false;
+  }
 }
 
 export class Project {
@@ -85,23 +105,27 @@ export class Project {
   }
 
   static findProject(projectName) {
-    return Project.allProjects.find((project) => project.getName() === projectName);
+    return Project.allProjects.find((project) => project.name === projectName);
   }
 
   static addProject(project){
     Project.allProjects.push(project);
   }
 
-  static addTaskToActiveProject(name, dueDate, priority){
-    Project.activeProject.tasks.push(new Task(name, dueDate, priority))
+  static addTaskToActiveProject(task){
+    Project.activeProject.tasks.push(task)
   }
 
   static getActiveProject(){
     return Project.activeProject;
   }
 
-  addTask(name, dueDate, priority){
-    this.tasks.push(new Task(name, dueDate, priority))
+  addTask(task){
+    this.tasks.push(task)
+  }
+
+  findTask(name) {
+    return this.tasks.find((task) => task.name === name);
   }
 
   getName(){

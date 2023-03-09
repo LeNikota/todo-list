@@ -60,6 +60,7 @@ button{
   border: none;
   padding: 10px;
   border-radius: 5px;
+  transition: 0.3s background-color;
 
   &:hover{
     background-color: var(--bg-button-hover);
@@ -174,12 +175,12 @@ main{
       }
 
       img:nth-child(n + 2){
-        visibility: hidden;
+        display: none;
       }
   
       &:hover{
         img{
-          visibility: visible;
+          display: initial;
         }
       }
     }
