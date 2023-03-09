@@ -2,7 +2,6 @@ import Element from "./Classes";
 import { PubSub } from "./PubSub";
 import deleteIcon from './icons/delete.svg';
 import addIcon from './icons/add.svg';
-import incompleteIcon from './icons/incomplete.svg';
 import editIcon from './icons/edit.svg';
 
 export default function createDOM() {
@@ -69,7 +68,7 @@ function createTaskModalWindow() {
     .appendChild(new Element('label').addAttribute({ class: 'form-group'})
       .appendChild(new Element('span').setTextContent('Priority: '))
       .appendChild(new Element('fieldset')
-        .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', value: 'low', required: ''}))
+        .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', value: 'low', required: '', checked: ''}))
         .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', value: 'medium', required: ''}))
         .appendChild(new Element('input').addAttribute({class: 'priority', type: 'radio', name: 'priority', value: 'high', required: ''}))
       )
@@ -172,20 +171,21 @@ function updateDOM({allProjects, taskContainer}) {
 
     const projectDisplay = document.querySelector('.project-display');
     projectDisplay.appendChild(new Element('h2').setTextContent(project.getName()).build());
-    if(project.tasks){
-      project.tasks.map(task => {
-        return new Element('button').addAttribute({class: 'task'})
-          .appendChild(new Element('img').addAttribute({class: 'task-state', src: incompleteIcon}))
-          .appendChild(new Element('p').setTextContent(task.name).addAttribute({class: 'task-description'}))
-          .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date', disabled: '', value: task.dueDate}))
-          .appendChild(new Element('img').addAttribute({class: 'edit', src: editIcon}))
-          .appendChild(new Element('img').addAttribute({class: 'delete', src: deleteIcon}))
-          .addEventListener({click: handleTaskClick})
-          .build()
-      }).forEach(element => {
-        projectDisplay.appendChild(element);
-      });
-    }
+    project.tasks.map(task => {
+      const taskAttributes = (task.complete) ? {class: 'complete', type: 'checkbox', checked:''} : {class: 'complete', type: 'checkbox'};
+      return new Element('button').addAttribute({class: 'task'})
+        .appendChild(new Element('input').addAttribute(taskAttributes))
+        .appendChild(new Element('p').setTextContent(task.name).addAttribute({class: 'task-description'}))
+        .appendChild(new Element('p').setTextContent(task.priority).addAttribute({class: `priority ${task.priority}`}))
+        .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date', disabled: '', value: task.dueDate}))
+        .appendChild(new Element('img').addAttribute({class: 'edit', src: editIcon}))
+        .appendChild(new Element('img').addAttribute({class: 'delete', src: deleteIcon}))
+        .addEventListener({click: handleTaskClick})
+        .build()
+    }).forEach(element => {
+      projectDisplay.appendChild(element);
+    });
+
     projectDisplay.appendChild(new Element('button').addAttribute({class: 'add-task', type: 'button'})
       .appendChild(new Element('img').addAttribute({src: addIcon}))
       .appendChild(new Element('span').setTextContent('Add Task'))

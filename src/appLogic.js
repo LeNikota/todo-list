@@ -8,6 +8,7 @@ export default function initialize() {
   PubSub.subscribe('Project delete', deleteProject);
   PubSub.subscribe("Task add", addTask);
   PubSub.subscribe("Task edit", editTask);
+  PubSub.subscribe("Task complete", completeTask);
 }
 
 function addProject({ project_name }) {
@@ -39,11 +40,16 @@ function addTask({ task_name, task_due, priority }) {
 }
 
 function editTask([oldName, newTask]) {
-  console.log(newTask);
   const task = Project.getActiveProject().findTask(oldName);
   task.setName(newTask.task_name);
   task.setDueDate(newTask.task_due);
   task.setPriority(newTask.priority);
+  PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
+}
 
+function completeTask(name) {
+  const task = Project.getActiveProject().findTask(name);
+  task.toggleCompletion()
+  console.log(task.complete);///-delete
   PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
 }

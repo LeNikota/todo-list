@@ -80,12 +80,8 @@ export class Task {
     this.priority = priority;
   }
 
-  complete(){
-    this.complete = true;
-  }
-
-  uncomplete(){
-    this.complete = false;
+  toggleCompletion(){
+    this.complete = !this.complete;
   }
 }
 

@@ -161,13 +161,57 @@ main{
       gap: 10px;
       padding: 0 10px;
 
-      input{
+      input:not(:is([type='checkbox'], [type='date'])){
         margin-left: auto;
         background-color: var(--bg-sidebar);
       }
 
+      input[type='checkbox']{
+        appearance: none;
+        width: 1.25rem;
+        height: 1.25rem;
+        border: var(--font-color) solid 2px;
+        display: grid;
+        place-content: center;
+        transition: 100ms ease-in-out;
+
+        &::before {
+          content: "";
+          width: 0.8em;
+          height: 0.8em;
+          box-shadow: inset 1em 1em transparent;
+          clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+
+        &:checked{
+          background-color: var(--font-color);
+          &::before{
+            box-shadow: inset 1em 1em white;
+          }
+        }
+      }
+
       p {
         font-size: 1rem;
+      }
+
+      .priority{
+        margin-left: auto;
+        font-size: 0.925rem;
+        border: currentColor 2px solid;
+        border-radius: 5px;
+        padding: 3px 6px;
+        text-transform: capitalize;
+
+        &.low{
+          color: green;
+        }
+        &.medium{
+          color: orange;
+        }
+        &.high{
+          color: red;
+        }
       }
   
       img {
