@@ -2,6 +2,9 @@ import { Project, Task, Warning } from "./Classes";
 import { PubSub } from "./PubSub";
 
 export default function initialize() {
+  retrieveFromLocalStorage()
+  PubSub.subscribe("Update DOM", populateLocalStorage);
+  
   PubSub.subscribe("Project add", addProject);
   PubSub.subscribe("Project click", openProject);
   PubSub.subscribe('Project edit', editProject);
@@ -10,6 +13,15 @@ export default function initialize() {
   PubSub.subscribe("Task edit", editTask);
   PubSub.subscribe("Task complete", completeTask);
   PubSub.subscribe("Task delete", deleteTask);
+}
+
+function populateLocalStorage() {
+  localStorage.setItem('projectsArray', JSON.stringify(Project.getAllProjects()));
+}
+
+function retrieveFromLocalStorage() {
+  Project.setAllProjects(JSON.parse(localStorage.getItem('projectsArray')));
+  PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
 }
 
 function hasDuplicates(array, name) {
@@ -74,6 +86,7 @@ function deleteTask(name) {
   project.deleteTask(name)
   PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
 }
+
 
 /*
 

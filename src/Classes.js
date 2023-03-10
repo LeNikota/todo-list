@@ -100,6 +100,18 @@ export class Project {
     return Project.allProjects;
   }
 
+  static setAllProjects(allProjects){
+    allProjects.forEach( project => {
+      Object.setPrototypeOf( project, Project.prototype)
+      project.tasks.forEach( task => {
+        Object.setPrototypeOf(task, Task.prototype)
+      })
+    })
+    
+    Project.allProjects = allProjects;
+    Project.activeProject = Project.allProjects.find((project) => project.active)
+  }
+
   static findProject(projectName) {
     return Project.allProjects.find((project) => project.name === projectName);
   }
