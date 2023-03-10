@@ -1,4 +1,4 @@
-import { Project, Task } from "./Classes";
+import { Project, Task, Warning } from "./Classes";
 import { PubSub } from "./PubSub";
 
 export default function initialize() {
@@ -12,7 +12,16 @@ export default function initialize() {
   PubSub.subscribe("Task delete", deleteTask);
 }
 
+function hasDuplicates(array, name) {
+  if(array.some(element => element.name === name)){
+    new Warning('The project/task with the same name already exists')
+    return true;
+  }
+}
+
 function addProject({ project_name }) {
+  if(hasDuplicates(Project.getAllProjects(), project_name)) return;
+
   Project.addProject(new Project(project_name));
   PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
 }
@@ -24,6 +33,8 @@ function openProject(projectName) {
 }
 
 function editProject([oldName, {project_name}]) {
+  if(hasDuplicates(Project.getAllProjects(), project_name)) return;
+
   const project = Project.findProject(oldName);
   project.setName(project_name);
   PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
@@ -36,11 +47,15 @@ function deleteProject(projectName) {
 }
 
 function addTask({ task_name, task_due, priority }) {
+  if(hasDuplicates(Project.getActiveProject().getTasks(), task_name)) return;
+
   Project.addTaskToActiveProject(new Task(task_name, task_due, priority));
   PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
 }
 
 function editTask([oldName, newTask]) {
+  if(hasDuplicates(Project.getActiveProject().getTasks(), newTask.task_name)) return;
+
   const task = Project.getActiveProject().findTask(oldName);
   task.setName(newTask.task_name);
   task.setDueDate(newTask.task_due);
@@ -66,9 +81,8 @@ function deleteTask(name) {
 
 
 
-//check when there is a repeating name in projects' and tasks' names
-//display all tasks within all time, month, week, day, 
-
+// save projects to the local storage to the project
+// display all tasks within all time, month, week, day, 
 
 
 

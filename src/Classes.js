@@ -131,13 +131,13 @@ export class Project {
   getName(){
     return this.name;
   }
-  
-  getTasks(){
-    return this.tasks;
-  }
 
   setName(name){
     this.name = name;
+  }
+  
+  getTasks(){
+    return this.tasks;
   }
 
   open(){
@@ -158,5 +158,17 @@ export class Project {
       Project.activeProject = null;
     }
     Project.allProjects = Project.allProjects.filter((project) => project !== this);
+  }
+}
+
+export class Warning {
+  constructor(text, timeout) {
+    const warningBox = document.createElement('div');
+    warningBox.textContent = text;
+    warningBox.classList.add('warning');
+    document.body.appendChild(warningBox);
+    setTimeout(() => {
+      warningBox.remove();
+    }, timeout || 3000);
   }
 }

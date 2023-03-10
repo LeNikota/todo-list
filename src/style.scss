@@ -25,6 +25,7 @@
   --bg-overlay: #00000080;
   --bg-modal-window:white;
   --bg-button-hover: #ccc;
+  --bg-warning: #eee;
   --font-color:#333;
   --font-light-color: white;
 }
@@ -356,4 +357,17 @@ h1{
       }
     }
   }
+}
+
+.warning {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  background-color: var(--bg-warning);
+  color: var(--font-color);
+  padding: 15px 25px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
