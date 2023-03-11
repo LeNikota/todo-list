@@ -121,6 +121,7 @@ function displayTasksByDate(timeFrame) {
       name: timeFrame,
       tasks: tasksWithinTimeFrame,
       canAddProjects: false,
+      editable: false,
       getName: () => timeFrame.replace(/^\w/, c => c.toUpperCase())
     }
   });

@@ -170,17 +170,30 @@ function updateDOM({allProjects, taskContainer}) {
   function updateTasksDisplay(taskContainer) {
     if(taskContainer == null) return;
 
+    const editState = {};
+    const deleteState = {};
+    const checkboxState = {}
+    if(taskContainer.editable === false) {
+      editState.style = 'display: none';
+      deleteState.style = 'display: none';
+      checkboxState.disabled = '';
+    }
+
     const projectDisplay = document.querySelector('.project-display');
     projectDisplay.appendChild(new Element('h2').setTextContent(taskContainer.getName()).build());
     taskContainer.tasks.map(task => {
-      const taskAttributes = (task.complete) ? {class: 'complete', type: 'checkbox', checked:''} : {class: 'complete', type: 'checkbox'};
+      if(task.complete) {
+        checkboxState.checked = '';
+      } else{
+        delete checkboxState.checked;
+      }
       return new Element('button').addAttribute({class: 'task'})
-        .appendChild(new Element('input').addAttribute(taskAttributes))
+        .appendChild(new Element('input').addAttribute({class: 'complete', type: 'checkbox', ...checkboxState}))
         .appendChild(new Element('p').setTextContent(task.name).addAttribute({class: 'task-description'}))
         .appendChild(new Element('p').setTextContent(task.priority).addAttribute({class: `priority ${task.priority}`}))
         .appendChild(new Element('input').addAttribute({class: 'task-date', type: 'date', disabled: '', value: task.dueDate}))
-        .appendChild(new Element('img').addAttribute({class: 'edit', src: editIcon}))
-        .appendChild(new Element('img').addAttribute({class: 'delete', src: deleteIcon}))
+        .appendChild(new Element('img').addAttribute({class: 'edit', src: editIcon, ...editState}))
+        .appendChild(new Element('img').addAttribute({class: 'delete', src: deleteIcon, ...deleteState}))
         .addEventListener({click: handleTaskClick})
         .build()
     }).forEach(element => {
