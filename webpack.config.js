@@ -1,8 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  mode:'development', //change
-  devtool: 'inline-source-map', //delete
+  mode:'production',
   devServer: {
     static: './dist',
   },
