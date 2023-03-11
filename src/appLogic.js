@@ -1,3 +1,4 @@
+import { isThisMonth, isThisWeek, isThisYear, isToday, parseISO } from "date-fns";
 import { Project, Task, Warning } from "./Classes";
 import { PubSub } from "./PubSub";
 
@@ -13,6 +14,8 @@ export default function initialize() {
   PubSub.subscribe("Task edit", editTask);
   PubSub.subscribe("Task complete", completeTask);
   PubSub.subscribe("Task delete", deleteTask);
+
+  PubSub.subscribe('Calender button click', displayTasksByDate)
 }
 
 function populateLocalStorage() {
@@ -87,15 +90,49 @@ function deleteTask(name) {
   PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
 }
 
+function displayTasksByDate(timeFrame) {
+  if(Project.getActiveProject()) Project.getActiveProject().close();
+
+  const allTasks = Project.getAllProjects().reduce((accumulator, project) => accumulator.concat(project.tasks), []);
+  let tasksWithinTimeFrame;
+  switch (timeFrame) {
+    case 'today':
+      tasksWithinTimeFrame = allTasks.filter( task => isToday(parseISO(task.getDueDate())))
+      break;
+    case 'week':
+      tasksWithinTimeFrame = allTasks.filter( task => isThisWeek(parseISO(task.getDueDate())))
+      break;
+    case 'month':
+      tasksWithinTimeFrame = allTasks.filter( task => isThisMonth(parseISO(task.getDueDate())))
+      break;
+    case 'year':
+      tasksWithinTimeFrame = allTasks.filter( task => isThisYear(parseISO(task.getDueDate())))
+      break;
+    case 'all time':
+      tasksWithinTimeFrame = allTasks;
+      break;
+    case 'completed':
+      tasksWithinTimeFrame = allTasks.filter( task => task.complete)
+      break;
+  }
+  PubSub.publish("Update DOM", {
+    allProjects: Project.getAllProjects(),
+    taskContainer: {
+      name: timeFrame,
+      tasks: tasksWithinTimeFrame,
+      canAddProjects: false,
+      getName: () => timeFrame.replace(/^\w/, c => c.toUpperCase())
+    }
+  });
+}
 
 /*
 
 
 
-
-
-// save projects to the local storage to the project
-// display all tasks within all time, month, week, day, 
+// check is the dates and tasks that those functions return are actually whiting this time range, compare with others on the odin project
+// when displaying tasks in the calender disallow to edit, complete, delete
+// make dom element indicate opened project inside of the list of projects
 
 
 

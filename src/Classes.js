@@ -7,10 +7,8 @@ export default class Element {
   }
 
   addAttribute(attributes){
-    for (const key in attributes){
-      this.attributes[key] = attributes[key];
-    }
-    
+    this.attributes = {...this.attributes, ...attributes};
+
     return this;
   }
 
@@ -74,6 +72,10 @@ export class Task {
 
   setDueDate(dueDate){
     this.dueDate = dueDate;
+  }
+
+  getDueDate(){
+    return this.dueDate;
   }
 
   setPriority(priority){

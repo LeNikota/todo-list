@@ -7,7 +7,7 @@ export const PubSub = {
   },
   unsubscribe(eventName, func) {
     if (this.events[eventName]) {
-      this.events[eventName].filter((currentFunc) => currentFunc !== func);
+      this.events[eventName] = this.events[eventName].filter((currentFunc) => currentFunc !== func);
     }
   },
   publish(eventName, data) {

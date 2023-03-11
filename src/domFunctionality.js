@@ -24,6 +24,7 @@ function createSidebar() {
         .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('Month').addEventListener({'click': ()=> PubSub.publish('Calender button click', 'month')}))
         .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('Year').addEventListener({'click': ()=> PubSub.publish('Calender button click', 'year')}))
         .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('All time').addEventListener({'click': ()=> PubSub.publish('Calender button click', 'all time')}))
+        .appendChild(new Element('button').addAttribute({ type: 'button' }).setTextContent('Completed').addEventListener({'click': ()=> PubSub.publish('Calender button click', 'completed')}))
     )
     .appendChild(new Element('h2').setTextContent('Projects'))
     .appendChild(new Element('div').addAttribute({ class: 'project-list' }))
@@ -166,12 +167,12 @@ function updateDOM({allProjects, taskContainer}) {
       projectList.appendChild(project)
     })
   }
-  function updateTasksDisplay(project) {
-    if(project == null) return;
+  function updateTasksDisplay(taskContainer) {
+    if(taskContainer == null) return;
 
     const projectDisplay = document.querySelector('.project-display');
-    projectDisplay.appendChild(new Element('h2').setTextContent(project.getName()).build());
-    project.tasks.map(task => {
+    projectDisplay.appendChild(new Element('h2').setTextContent(taskContainer.getName()).build());
+    taskContainer.tasks.map(task => {
       const taskAttributes = (task.complete) ? {class: 'complete', type: 'checkbox', checked:''} : {class: 'complete', type: 'checkbox'};
       return new Element('button').addAttribute({class: 'task'})
         .appendChild(new Element('input').addAttribute(taskAttributes))
@@ -186,12 +187,14 @@ function updateDOM({allProjects, taskContainer}) {
       projectDisplay.appendChild(element);
     });
 
-    projectDisplay.appendChild(new Element('button').addAttribute({class: 'add-task', type: 'button'})
-      .appendChild(new Element('img').addAttribute({src: addIcon}))
-      .appendChild(new Element('span').setTextContent('Add Task'))
-      .addEventListener({click: toggleTaskModalWindow})
-      .build()
-    )
+    if(taskContainer.canAddProjects !== false){
+      projectDisplay.appendChild(new Element('button').addAttribute({class: 'add-task', type: 'button'})
+        .appendChild(new Element('img').addAttribute({src: addIcon}))
+        .appendChild(new Element('span').setTextContent('Add Task'))
+        .addEventListener({click: toggleTaskModalWindow})
+        .build()
+      )
+    }
   }
 
   clearDOM();
