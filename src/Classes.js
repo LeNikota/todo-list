@@ -120,6 +120,7 @@ export class Project {
 
   static addProject(project){
     Project.allProjects.push(project);
+    return project;
   }
 
   static addTaskToActiveProject(task){
@@ -132,6 +133,7 @@ export class Project {
 
   addTask(task){
     this.tasks.push(task)
+    return this;
   }
 
   findTask(name) {

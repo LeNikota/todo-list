@@ -1,9 +1,13 @@
-import { isThisMonth, isThisWeek, isThisYear, isToday, parseISO } from "date-fns";
+import { add, isThisMonth, isThisWeek, isThisYear, isToday, parseISO } from "date-fns";
 import { Project, Task, Warning } from "./Classes";
 import { PubSub } from "./PubSub";
 
 export default function initialize() {
-  retrieveFromLocalStorage()
+  if(localStorage.length === 0){
+    onFirstOpen();
+  } else {
+    retrieveFromLocalStorage();
+  }
   PubSub.subscribe("Update DOM", populateLocalStorage);
   
   PubSub.subscribe("Project add", addProject);
@@ -127,16 +131,17 @@ function displayTasksByDate(timeFrame) {
   });
 }
 
-/*
-
-
-
-// check is the dates and tasks that those functions return are actually whiting this time range, compare with others on the odin project
-// when displaying tasks in the calender disallow to edit, complete, delete
-// make dom element indicate opened project inside of the list of projects
-
-
-
-
-
-*/
+function onFirstOpen() {
+  function formatDate(date) {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  const project = Project.addProject(new Project('How to become a programmer'));
+  project.addTask(new Task('Complete Odin curriculum', formatDate(add(new Date(), {months: 5})), 'high'))
+    .addTask(new Task('Learn actively and build projects', formatDate(add(new Date(), {years: 1})), 'medium'))
+    .addTask(new Task('Unwind if i feel upcoming burnout', formatDate(add(new Date(), {days: 4})), 'medium'))
+    .addTask(new Task('Meet with friends', formatDate(new Date()), 'low'));
+  PubSub.publish("Update DOM", {allProjects: Project.getAllProjects(), taskContainer: Project.getActiveProject()});
+}
